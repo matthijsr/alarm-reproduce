@@ -1,26 +1,31 @@
+import formulas
 
 
-def T_top(T_prop, T_ver):
-    """
-Time to construct topology
-    :param T_prop: Time to transmit all LAMs to all nodes
-    :param T_ver: Time to verify all group signatures
-    :return: T_prop + T_ver
-    """
-    return T_prop + T_ver
+def main():
+    N = 700
+    Tver_gsig = 0.01
+    LAM_size = 350
+    BW = 1000*1024
+    alpha = 2
+    z_0 = 10
+    L = 1000
+    lm = 0.02
+    d = formulas.d_avg(N, lm)
+    T_ver = formulas.T_ver(N, Tver_gsig)
+    D_min = formulas.D_min(alpha, z_0, d)
+    MaxNumTx = formulas.MaxNumTx(L, D_min)
+    T_prop = formulas.T_prop(N, LAM_size, MaxNumTx, BW)
+    print(f"T_prop: {T_prop}")
+    print(f"T_prop (assume alpha=2, z_0=10): {formulas.T_prop_assum_Dmin(d, LAM_size, N, BW, L)}")
+    print(f"T_prop (include poisson): {formulas.T_prop_assum(N, LAM_size, BW, L, lm)}")
+    print(f"T_ver: {T_ver}")
+    print(f"T_top: {formulas.T_top(T_prop, T_ver)}")
+    LAM_prd = 5
+    f_prd = 0.1
+    print(f"N_max (assumptions): {formulas.N_max(L, LAM_prd, f_prd, BW, LAM_size, lm)}")
+    T_prop = LAM_prd * f_prd
+    print(f"N_max (full): {formulas.N_max_full(T_prop, MaxNumTx, BW, LAM_size)}")
 
 
-def T_ver(N, Tver_gsig):
-    """
-Time to verify all N group signatures
-    :param N: Number of group signatures
-    :param Tver_gsig: Time to verify a single group signature
-    :return:
-    """
-    return N * Tver_gsig
-
-
-def T_prop(N, LAM_size, MaxNumTx, BW):
-    return (N**2 * LAM_size) / (MaxNumTx * BW)
-
-
+if __name__ == "__main__":
+    main()
