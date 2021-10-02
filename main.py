@@ -24,7 +24,7 @@ def main():
     f_prd = 0.1
     print(f"N_max (assumptions): {formulas.N_max(L, LAM_prd, f_prd, BW, LAM_size, lm)}")
     T_prop = LAM_prd * f_prd
-    print(f"N_max (full): {formulas.N_max_full(T_prop, MaxNumTx, BW, LAM_size)}")
+    print(f"N_max (full): {formulas.N_max_full(alpha, lm, T_prop, L, BW, LAM_size, z_0)}")
 
 
 if __name__ == "__main__":

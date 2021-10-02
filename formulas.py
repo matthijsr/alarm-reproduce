@@ -92,14 +92,9 @@ def N_max(L, LAM_prd, f_prd, BW, LAM_size, lm):
     return L**(4/5)*math.sqrt((LAM_prd*f_prd*BW*(math.pi**(3/2)*math.sqrt(3*lm)))/(LAM_size*256))
 
 
-def N_max_full(T_prop, MaxNumTx, BW, LAM_size):
-    """
-The maximum number of nodes
-    :param T_prop: Time to propagate through the network
-    :param MaxNumTx: Maximum number of simultaneous connections
-    :param BW: Bandwidth, e.g. 10 MBps
-    :param LAM_size: Size of each LAM (match BW units)
-    :return: math.sqrt((T_prop*MaxNumTx*BW)/LAM_size)
-    """
-    return math.sqrt((T_prop*MaxNumTx*BW)/LAM_size)
+def N_max_full(alpha, lm, T_prop, L, BW, LAM_size, z_0):
+    return (
+        (T_prop * 2 * L**2 * BW)
+        / (LAM_size*math.sqrt(3)*((768*z_0)/(45*math.pi*math.sqrt(lm*math.pi)))**(2/alpha))
+    )**(1/(2+1/alpha))
 
