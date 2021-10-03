@@ -85,14 +85,60 @@ def T_prop_assum_Dmin(d, LAM_size, N, BW, L):
 
 
 def T_prop_assum(N, LAM_size, BW, L, lm):
+    """
+Calculate T_prop assuming alpha=2 and z_0=10
+    :param N: Number of nodes
+    :param LAM_size: Size of LAM (units should match BW)
+    :param BW: Bandwidth (e.g. 10 MBps)
+    :param L: Width/Length of area
+    :param lm: Number of nodes per unit area (m**2)
+    :return:
+    .. math:: \frac{N^\frac{5}{2} \cdot LAM_{size} \cdot 256}{BW' \cdot L^2 \pi^{\frac{3}{2}} \sqrt{3\lambda}}
+    """
     return (N**(5/2)*LAM_size*256)/(BW*L**2*math.pi**(3/2)*math.sqrt(3*lm))
 
 
-def N_max(L, LAM_prd, f_prd, BW, LAM_size, lm):
+def N_max_assum_original(L, LAM_prd, f_prd, BW, LAM_size, lm):
+    """
+Maximum number of nodes, assuming alpha=2 and z_0=10. Using incorrect derivation from equation 15 of the original paper.
+    :param L: Width/Length of area
+    :param LAM_prd: Time required to flood LAMs throughout network
+    :param f_prd: fraction of the flooding period
+    :param BW: Bandwidth (e.g. 10 MBps)
+    :param LAM_size: Size of LAM (units should match BW)
+    :param lm: Number of nodes per unit area (m**2)
+    :return:
+    .. math:: L^\frac{4}{5} \cdot \sqrt{\frac{T_{prop} \cdot BW' \cdot \pi^{\frac{3}{2}} \sqrt{3\lambda}}{LAM_{size} \cdot 256}}
+    """
     return L**(4/5)*math.sqrt((LAM_prd*f_prd*BW*(math.pi**(3/2)*math.sqrt(3*lm)))/(LAM_size*256))
+
+def N_max_assum(L, LAM_prd, f_prd, BW, LAM_size, lm):
+    """
+Maximum number of nodes, assuming alpha=2 and z_0=10. Using correct derivation.
+    :param L: Width/Length of area
+    :param LAM_prd: Time required to flood LAMs throughout network
+    :param f_prd: fraction of the flooding period
+    :param BW: Bandwidth (e.g. 10 MBps)
+    :param LAM_size: Size of LAM (units should match BW)
+    :param lm: Number of nodes per unit area (m**2)
+    :return:
+    .. math:: L^\frac{4}{5} \cdot (\frac{T_{prop} \cdot BW' \cdot \pi^{\frac{3}{2}} \sqrt{3\lambda}}{LAM_{size} \cdot 256})^{\frac{2}{5}}
+    """
+    return L**(4/5)*((LAM_prd*f_prd*BW*(math.pi**(3/2)*math.sqrt(3*lm)))/(LAM_size*256))**(2/5)
 
 
 def N_max_full(alpha, lm, T_prop, L, BW, LAM_size, z_0):
+    """
+Maximum number of nodes, without assumptions
+    :param alpha:
+    :param lm:
+    :param T_prop:
+    :param L:
+    :param BW:
+    :param LAM_size:
+    :param z_0:
+    :return:
+    """
     return (
         (T_prop * 2 * L**2 * BW)
         / (LAM_size*math.sqrt(3)*((768*z_0)/(45*math.pi*math.sqrt(lm*math.pi)))**(2/alpha))

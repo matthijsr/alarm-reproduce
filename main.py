@@ -22,10 +22,12 @@ def main():
     print(f"T_top: {formulas.T_top(T_prop, T_ver)}")
     LAM_prd = 5
     f_prd = 0.1
-    print(f"N_max (assumptions): {formulas.N_max(L, LAM_prd, f_prd, BW, LAM_size, lm)}")
+    print(f"N_max (assumptions, original): {formulas.N_max_assum_original(L, LAM_prd, f_prd, BW, LAM_size, lm)}")
+    print(f"N_max (assumptions, correct): {formulas.N_max_assum(L, LAM_prd, f_prd, BW, LAM_size, lm)}")
     T_prop = LAM_prd * f_prd
     print(f"N_max (full): {formulas.N_max_full(alpha, lm, T_prop, L, BW, LAM_size, z_0)}")
 
 
 if __name__ == "__main__":
     main()
+
