@@ -1,7 +1,7 @@
 import formulas
-from matplotlib.ticker import MaxNLocator
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 def test():
     N = 700
@@ -149,15 +149,18 @@ def plot_distance(saveloc, LAM_size=350):
 
 
 def plot_for_size(LAM_size=350):
-    plot_LAM_period(formulas.N_max_assum_original, f'graphs\original\LAM_prd_{LAM_size}.pdf', LAM_size)
-    plot_LAM_period(formulas.N_max_assum, f'graphs\corrected\LAM_prd_{LAM_size}.pdf', LAM_size)
-    plot_lambda(formulas.N_max_assum_original, f'graphs\original\density_{LAM_size}.pdf', LAM_size)
-    plot_lambda(formulas.N_max_assum, f'graphs\corrected\density_{LAM_size}.pdf', LAM_size)
-    plot_distance(f'graphs\original\distance_{LAM_size}.pdf', LAM_size)
+    plot_LAM_period(formulas.N_max_assum_original, f'graphs/original/LAM_prd_{LAM_size}.pdf', LAM_size)
+    plot_LAM_period(formulas.N_max_assum, f'graphs/corrected/LAM_prd_{LAM_size}.pdf', LAM_size)
+    plot_lambda(formulas.N_max_assum_original, f'graphs/original/density_{LAM_size}.pdf', LAM_size)
+    plot_lambda(formulas.N_max_assum, f'graphs/corrected/density_{LAM_size}.pdf', LAM_size)
+    plot_distance(f'graphs/original/distance_{LAM_size}.pdf', LAM_size)
 
 
 def main():
     # test()
+
+    os.makedirs('graphs/original', exist_ok=True)
+    os.makedirs('graphs/corrected', exist_ok=True)
 
     # Paper claims LAM_size = 350 bytes
     plot_for_size(350)
