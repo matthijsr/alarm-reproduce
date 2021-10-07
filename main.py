@@ -55,7 +55,7 @@ def plot_LAM_period(func, saveloc, LAM_size=350):
     y6 = [func(L, 30, f_prd, BW, LAM_size, lm) for L in x]
     plt.plot(x, y6, label='30sec LAM period', linestyle=(0, (3, 1, 1, 1, 1, 1)), color='orange')
 
-    plt.title(f'Maximum number of nodes for time required to propagate LAMs. LAM_size = {LAM_size}')
+    # plt.title(f'Maximum number of nodes for time required to propagate LAMs. LAM_size = {LAM_size}')
 
     plt.xlabel('Area Length/Width (L) in meters')
     plt.ylabel('Number of Nodes')
@@ -91,7 +91,7 @@ def plot_lambda(func, saveloc, LAM_size=350):
     y5 = [func(L, LAM_prd, f_prd, BW, LAM_size, 0.1) for L in x]
     plt.plot(x, y5, label='Nodes/Unit Area = 0.1', linestyle='dashdot', color='grey')
 
-    plt.title(f'Maximum number of nodes for density of nodes. LAM_size = {LAM_size}')
+    # plt.title(f'Maximum number of nodes for density of nodes. LAM_size = {LAM_size}')
 
     plt.xlabel('Area Length/Width (L) in meters')
     plt.ylabel('Number of Nodes')
@@ -131,7 +131,7 @@ def plot_distance(saveloc, LAM_size=350):
     y6 = [formulas.N_max_d(T_prop, BW, L, 300, LAM_size) for L in x]
     plt.plot(x, y6, label='d=300m', linestyle=(0, (3, 1, 1, 1, 1, 1)), color='orange')
 
-    plt.title(f'Maximum number of nodes for distance (d) between sender and receiver. LAM_size = {LAM_size}')
+    # plt.title(f'Maximum number of nodes for distance (d) between sender and receiver. LAM_size = {LAM_size}')
 
     plt.xlabel('Area Length/Width (L) in meters')
     plt.ylabel('Number of Nodes')
