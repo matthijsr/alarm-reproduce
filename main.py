@@ -60,6 +60,9 @@ def plot_LAM_period(func, saveloc, LAM_size=350):
     plt.ylabel('Number of Nodes')
     plt.yticks(range(0, 8001, 1000))
 
+    plt.xlim([1000, 5000])
+    plt.ylim([0, 8000])
+
     # Add a grid
     plt.grid(alpha=.4)
 
@@ -99,6 +102,9 @@ def plot_LAM_period_distance(d, saveloc, LAM_size=350):
     # Add a grid
     plt.grid(alpha=.4)
 
+    plt.xlim([1000, 5000])
+    plt.ylim([0, 8000])
+
     # Add a Legend
     plt.legend()
 
@@ -131,6 +137,9 @@ def plot_lambda(func, saveloc, LAM_size=350):
     plt.xlabel('Area Length/Width (L) in meters')
     plt.ylabel('Number of Nodes')
     plt.yticks(range(500, 4501, 500))
+
+    plt.xlim([1000, 5000])
+    plt.ylim([500, 4500])
 
     # Add a grid
     plt.grid(alpha=.4)
@@ -169,6 +178,9 @@ def plot_distance(saveloc, LAM_size=350):
     plt.ylabel('Number of Nodes')
     plt.yticks(range(500, 4501, 500))
 
+    plt.xlim([1000, 5000])
+    plt.ylim([0, 4500])
+
     # Add a grid
     plt.grid(alpha=.4)
 
@@ -181,13 +193,13 @@ def plot_distance(saveloc, LAM_size=350):
 
 
 def plot_for_size(LAM_size=350):
-    plot_LAM_period(formulas.N_max_assum_original, f'graphs/original/LAM_prd_{LAM_size}.pdf', LAM_size)
-    plot_LAM_period(formulas.N_max_assum, f'graphs/corrected/LAM_prd_{LAM_size}.pdf', LAM_size)
-    plot_LAM_period_distance(50, f'graphs/original/LAM_prd_d50_{LAM_size}.pdf', LAM_size)
-    plot_LAM_period_distance(100, f'graphs/original/LAM_prd_d100_{LAM_size}.pdf', LAM_size)
-    plot_lambda(formulas.N_max_assum_original, f'graphs/original/density_{LAM_size}.pdf', LAM_size)
-    plot_lambda(formulas.N_max_assum, f'graphs/corrected/density_{LAM_size}.pdf', LAM_size)
-    plot_distance(f'graphs/original/distance_{LAM_size}.pdf', LAM_size)
+    plot_LAM_period(formulas.N_max_assum_original, f'graphs/original/LAM_prd_{LAM_size}.png', LAM_size)
+    plot_LAM_period(formulas.N_max_assum, f'graphs/corrected/LAM_prd_{LAM_size}.png', LAM_size)
+    plot_LAM_period_distance(50, f'graphs/original/LAM_prd_d50_{LAM_size}.png', LAM_size)
+    plot_LAM_period_distance(100, f'graphs/original/LAM_prd_d100_{LAM_size}.png', LAM_size)
+    plot_lambda(formulas.N_max_assum_original, f'graphs/original/density_{LAM_size}.png', LAM_size)
+    plot_lambda(formulas.N_max_assum, f'graphs/corrected/density_{LAM_size}.png', LAM_size)
+    plot_distance(f'graphs/original/distance_{LAM_size}.png', LAM_size)
 
 
 def main():
