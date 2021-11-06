@@ -193,10 +193,10 @@ def plot_distance(saveloc, LAM_size=350):
 
     plt.xlabel('Area Length/Width (L) in meters')
     plt.ylabel('Number of Nodes')
-    plt.yticks(range(500, 4501, 500))
+    #plt.yticks(range(500, 4501, 500))
 
     plt.xlim([1000, 5000])
-    plt.ylim([0, 4500])
+    #plt.ylim([0, 4500])
 
     # Add a grid
     plt.grid(alpha=.4)
