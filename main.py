@@ -3,65 +3,39 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-def test():
-    N = 700
-    Tver_gsig = 0.01
-    LAM_size = 350
-    BW = 1024*1024
-    alpha = 2
-    z_0 = 10
-    L = 1000
-    lm = 0.02
-    d = formulas.d_avg(N, lm)
-    T_ver = formulas.T_ver(N, Tver_gsig)
-    D_min = formulas.D_min(alpha, z_0, d)
-    MaxNumTx = formulas.MaxNumTx(L, D_min)
-    T_prop = formulas.T_prop(N, LAM_size, MaxNumTx, BW)
-    print(f"T_prop: {T_prop}")
-    print(f"T_prop (assume alpha=2, z_0=10): {formulas.T_prop_assum_Dmin(d, LAM_size, N, BW, L)}")
-    print(f"T_prop (include poisson): {formulas.T_prop_assum(N, LAM_size, BW, L, lm)}")
-    print(f"T_ver: {T_ver}")
-    print(f"T_top: {formulas.T_top(T_prop, T_ver)}")
+def plot_size(saveloc):
+    BW = 1024 * 1024
     LAM_prd = 5
     f_prd = 0.1
-    print(f"N_max (assumptions, original): {formulas.N_max_assum_original(L, LAM_prd, f_prd, BW, LAM_size, lm)}")
-    print(f"N_max (assumptions, correct): {formulas.N_max_assum(L, LAM_prd, f_prd, BW, LAM_size, lm)}")
     T_prop = LAM_prd * f_prd
-    print(f"N_max (full): {formulas.N_max(alpha, lm, T_prop, L, BW, LAM_size, z_0)}")
-
-    print("Target: 0.5 :")
-    print(f"T_prop (assume alpha=2, z_0=10, d=50, N=3800, L=5000): {formulas.T_prop_assum_Dmin(50, LAM_size, 3800, BW, 5000)}")
-    print(f"T_prop (assume alpha=2, z_0=10, d=50, N=4100, L=5000): {formulas.T_prop_assum_Dmin(50, LAM_size, 4100, BW, 5000)}")
-
-def plot_LAM_period(func, saveloc, LAM_size=350):
-    BW = 1024 * 1024
-    alpha = 2
-    z_0 = 10
-    lm = 0.02
-    f_prd = 0.1
+    d = 50
 
     x = np.array(range(1000, 5001, 500))
-    y1 = [func(L, 5, f_prd, BW, LAM_size, lm) for L in x]
-    plt.plot(x, y1, label='05sec LAM period', linestyle='solid', color='red')
-    y2 = [func(L, 10, f_prd, BW, LAM_size, lm) for L in x]
-    plt.plot(x, y2, label='10sec LAM period', linestyle='dashed', color='green')
-    y3 = [func(L, 15, f_prd, BW, LAM_size, lm) for L in x]
-    plt.plot(x, y3, label='15sec LAM period', linestyle='dotted', color='blue')
-    y4 = [func(L, 20, f_prd, BW, LAM_size, lm) for L in x]
-    plt.plot(x, y4, label='20sec LAM period', linestyle=(0, (1, 1)), color='purple')
-    y5 = [func(L, 25, f_prd, BW, LAM_size, lm) for L in x]
-    plt.plot(x, y5, label='25sec LAM period', linestyle='dashdot', color='grey')
-    y6 = [func(L, 30, f_prd, BW, LAM_size, lm) for L in x]
-    plt.plot(x, y6, label='30sec LAM period', linestyle=(0, (3, 1, 1, 1, 1, 1)), color='orange')
+    y1 = [formulas.N_max_d(T_prop, BW, L, d, 50) for L in x]
+    plt.plot(x, y1, label='LAM_size=50B', linestyle='solid', color='red')
+    y2 = [formulas.N_max_d(T_prop, BW, L, d, 100) for L in x]
+    plt.plot(x, y2, label='LAM_size=100B', linestyle='dashed', color='green')
+    y3 = [formulas.N_max_d(T_prop, BW, L, d, 200) for L in x]
+    plt.plot(x, y3, label='LAM_size=200B', linestyle='dotted', color='blue')
+    y4 = [formulas.N_max_d(T_prop, BW, L, d, 300) for L in x]
+    plt.plot(x, y4, label='LAM_size=300B', linestyle='solid', color='yellow')
+    y5 = [formulas.N_max_d(T_prop, BW, L, d, 350) for L in x]
+    plt.plot(x, y5, label='LAM_size=350B', linestyle='dashdot', color='grey')
+    y6 = [formulas.N_max_d(T_prop, BW, L, d, 600) for L in x]
+    plt.plot(x, y6, label='LAM_size=600B', linestyle='solid', color='cyan')
+    y7 = [formulas.N_max_d(T_prop, BW, L, d, 750) for L in x]
+    plt.plot(x, y7, label='LAM_size=750B', linestyle='dashed', color='black')
+    y8 = [formulas.N_max_d(T_prop, BW, L, d, 1024) for L in x]
+    plt.plot(x, y8, label='LAM_size=1024B', linestyle='dotted', color='purple')
 
-    # plt.title(f'Maximum number of nodes for time required to propagate LAMs. LAM_size = {LAM_size}')
+    # plt.title(f'Maximum number of nodes for distance (d) between sender and receiver. LAM_size = {LAM_size}')
 
     plt.xlabel('Area Length/Width (L) in meters')
     plt.ylabel('Number of Nodes')
-    plt.yticks(range(0, 8001, 1000))
+    plt.yticks(range(0, 12001, 1000))
 
     plt.xlim([1000, 5000])
-    plt.ylim([0, 8000])
+    plt.ylim([0, 12000])
 
     # Add a grid
     plt.grid(alpha=.4)
@@ -74,72 +48,115 @@ def plot_LAM_period(func, saveloc, LAM_size=350):
     plt.close()
 
 
-def plot_LAM_period_distance(d, saveloc, LAM_size=350):
+def plot_size_fixed_length(saveloc):
     BW = 1024 * 1024
-    f_prd = 0.1
-    T_prop = lambda LAM_prd: LAM_prd * f_prd
-
-    x = np.array(range(1000, 5001, 500))
-    y1 = [formulas.N_max_d(T_prop(5), BW, L, d, LAM_size) for L in x]
-    plt.plot(x, y1, label='05sec LAM period', linestyle='solid', color='red')
-    y2 = [formulas.N_max_d(T_prop(10), BW, L, d, LAM_size) for L in x]
-    plt.plot(x, y2, label='10sec LAM period', linestyle='dashed', color='green')
-    y3 = [formulas.N_max_d(T_prop(15), BW, L, d, LAM_size) for L in x]
-    plt.plot(x, y3, label='15sec LAM period', linestyle='dotted', color='blue')
-    y4 = [formulas.N_max_d(T_prop(20), BW, L, d, LAM_size) for L in x]
-    plt.plot(x, y4, label='20sec LAM period', linestyle=(0, (1, 1)), color='purple')
-    y5 = [formulas.N_max_d(T_prop(25), BW, L, d, LAM_size) for L in x]
-    plt.plot(x, y5, label='25sec LAM period', linestyle='dashdot', color='grey')
-    y6 = [formulas.N_max_d(T_prop(30), BW, L, d, LAM_size) for L in x]
-    plt.plot(x, y6, label='30sec LAM period', linestyle=(0, (3, 1, 1, 1, 1, 1)), color='orange')
-
-    # plt.title(f'Maximum number of nodes for time required to propagate LAMs. LAM_size = {LAM_size}')
-
-    plt.xlabel('Area Length/Width (L) in meters')
-    plt.ylabel('Number of Nodes')
-    plt.yticks(range(0, 8001, 1000))
-
-    # Add a grid
-    plt.grid(alpha=.4)
-
-    plt.xlim([1000, 5000])
-    plt.ylim([0, 8000])
-
-    # Add a Legend
-    plt.legend()
-
-    # Show the plot
-    plt.savefig(saveloc, bbox_inches='tight')
-    plt.close()
-
-
-def plot_lambda(func, saveloc, LAM_size=350):
-    BW = 1024 * 1024
-    alpha = 2
-    z_0 = 10
     LAM_prd = 5
     f_prd = 0.1
+    T_prop = LAM_prd * f_prd
+    d = 50
+    L = 5000
+
+    x = np.array(range(10, 2001, 10))
+    y1 = [formulas.N_max_d(T_prop, BW, L, 50, LAM_size) for LAM_size in x]
+    plt.plot(x, y1, linestyle='solid', color='red')
+    # y1 = [formulas.N_max_d(T_prop, BW, L, 50, LAM_size) for LAM_size in x]
+    # plt.plot(x, y1, label='d=50m', linestyle='solid', color='red')
+    # y2 = [formulas.N_max_d(T_prop, BW, L, 100, LAM_size) for LAM_size in x]
+    # plt.plot(x, y2, label='d=100m', linestyle='dashed', color='purple')
+    # y3 = [formulas.N_max_d(T_prop, BW, L, 200, LAM_size) for LAM_size in x]
+    # plt.plot(x, y3, label='d=200m', linestyle='dotted', color='green')
+    # y4 = [formulas.N_max_d(T_prop, BW, L, 300, LAM_size) for LAM_size in x]
+    # plt.plot(x, y4, label='d=300m', linestyle='dashdot', color='blue')
+
+    # plt.title(f'Maximum number of nodes for distance (d) between sender and receiver. LAM_size = {LAM_size}')
+
+    plt.xlabel('LAM_size in bytes')
+    plt.ylabel('Number of Nodes')
+    plt.yticks(range(0, 12001, 1000))
+
+    plt.xlim([0, 2000])
+    plt.ylim([0, 12000])
+
+    # Add a grid
+    plt.grid(alpha=.4)
+
+    # Add a Legend
+    # plt.legend()
+
+    # Show the plot
+    plt.savefig(saveloc, bbox_inches='tight')
+    plt.close()
+
+
+def plot_bw(saveloc):
+    LAM_size=350
+    LAM_prd = 5
+    f_prd = 0.1
+    T_prop = LAM_prd * f_prd
+    d = 50
 
     x = np.array(range(1000, 5001, 500))
-    y1 = [func(L, LAM_prd, f_prd, BW, LAM_size, 0.02) for L in x]
-    plt.plot(x, y1, label='Nodes/Unit Area = 0.02', linestyle='solid', color='red')
-    y2 = [func(L, LAM_prd, f_prd, BW, LAM_size, 0.04) for L in x]
-    plt.plot(x, y2, label='Nodes/Unit Area = 0.04', linestyle='dashed', color='green')
-    y3 = [func(L, LAM_prd, f_prd, BW, LAM_size, 0.06) for L in x]
-    plt.plot(x, y3, label='Nodes/Unit Area = 0.06', linestyle='dotted', color='blue')
-    y4 = [func(L, LAM_prd, f_prd, BW, LAM_size, 0.08) for L in x]
-    plt.plot(x, y4, label='Nodes/Unit Area = 0.08', linestyle=(0, (1, 1)), color='purple')
-    y5 = [func(L, LAM_prd, f_prd, BW, LAM_size, 0.1) for L in x]
-    plt.plot(x, y5, label='Nodes/Unit Area = 0.1', linestyle='dashdot', color='grey')
+    y1 = [formulas.N_max_d(T_prop, 10 * 1024, L, d, LAM_size) for L in x]
+    plt.plot(x, y1, label='BW=10 KiBps', linestyle='solid', color='red')
+    y2 = [formulas.N_max_d(T_prop, 100 * 1024, L, d, LAM_size) for L in x]
+    plt.plot(x, y2, label='BW=100 KiBps', linestyle='dashed', color='green')
+    y3 = [formulas.N_max_d(T_prop, 200 * 1024, L, d, LAM_size) for L in x]
+    plt.plot(x, y3, label='BW=200 KiBps', linestyle='dotted', color='blue')
+    y4 = [formulas.N_max_d(T_prop, 500 * 1024, L, d, LAM_size) for L in x]
+    plt.plot(x, y4, label='BW=500 KiBps', linestyle='solid', color='yellow')
+    y5 = [formulas.N_max_d(T_prop, 1024 * 1024, L, d, LAM_size) for L in x]
+    plt.plot(x, y5, label='BW=1 MiBps', linestyle='dashdot', color='grey')
+    y6 = [formulas.N_max_d(T_prop, 5 * 1024 * 1024, L, d, LAM_size) for L in x]
+    plt.plot(x, y6, label='BW=5 MiBps', linestyle='solid', color='cyan')
+    y7 = [formulas.N_max_d(T_prop, 10 * 1024 * 1024, L, d, LAM_size) for L in x]
+    plt.plot(x, y7, label='BW=10 MiBps', linestyle='dashed', color='black')
+    y8 = [formulas.N_max_d(T_prop, 20 * 1024 * 1024, L, d, LAM_size) for L in x]
+    plt.plot(x, y8, label='BW=20 MiBps', linestyle='dotted', color='purple')
 
-    # plt.title(f'Maximum number of nodes for density of nodes. LAM_size = {LAM_size}')
+    # plt.title(f'Maximum number of nodes for distance (d) between sender and receiver. LAM_size = {LAM_size}')
 
     plt.xlabel('Area Length/Width (L) in meters')
     plt.ylabel('Number of Nodes')
-    plt.yticks(range(500, 4501, 500))
+    plt.yticks(range(0, 20001, 1000))
 
     plt.xlim([1000, 5000])
-    plt.ylim([500, 4500])
+    plt.ylim([0, 20000])
+
+    # Add a grid
+    plt.grid(alpha=.4)
+
+    # Add a Legend
+    plt.legend()
+
+    # Show the plot
+    plt.savefig(saveloc, bbox_inches='tight')
+    plt.close()
+
+
+def plot_bw_fixed_length(saveloc):
+    LAM_prd = 5
+    f_prd = 0.1
+    T_prop = LAM_prd * f_prd
+    d = 50
+
+    x = np.array(range(1, 1000, 10))
+    y1 = [formulas.N_max_d(T_prop, BW * 1024 * 1024, 5000, 50, 350) for BW in x]
+    plt.plot(x, y1, label='L=5000m', linestyle='solid', color='red')
+    y2 = [formulas.N_max_d(T_prop, BW * 1024 * 1024, 10000, 50, 350) for BW in x]
+    plt.plot(x, y2, label='L=10000m', linestyle='dashed', color='purple')
+    y3 = [formulas.N_max_d(T_prop, BW * 1024 * 1024, 15000, 50, 350) for BW in x]
+    plt.plot(x, y3, label='L=15000m', linestyle='dotted', color='green')
+    y4 = [formulas.N_max_d(T_prop, BW * 1024 * 1024, 20000, 50, 350) for BW in x]
+    plt.plot(x, y4, label='L=20000m', linestyle='dashdot', color='yellow')
+
+    # plt.title(f'Maximum number of nodes for distance (d) between sender and receiver. LAM_size = {LAM_size}')
+
+    plt.xlabel('Bandwidth in Mebibytes per second')
+    plt.ylabel('Number of Nodes')
+    #plt.yticks(range(0, 20001, 1000))
+
+    plt.xlim([0, 1000])
+    #plt.ylim([0, 20000])
 
     # Add a grid
     plt.grid(alpha=.4)
@@ -153,7 +170,7 @@ def plot_lambda(func, saveloc, LAM_size=350):
 
 
 def plot_distance(saveloc, LAM_size=350):
-    BW = 1024 * 1024
+    BW = 10 * 1000 * 1024
     LAM_prd = 5
     f_prd = 0.1
     T_prop = LAM_prd * f_prd
@@ -192,28 +209,59 @@ def plot_distance(saveloc, LAM_size=350):
     plt.close()
 
 
-def plot_for_size(LAM_size=350):
-    plot_LAM_period(formulas.N_max_assum_original, f'graphs/original/LAM_prd_{LAM_size}.png', LAM_size)
-    plot_LAM_period(formulas.N_max_assum, f'graphs/corrected/LAM_prd_{LAM_size}.png', LAM_size)
-    plot_LAM_period_distance(50, f'graphs/original/LAM_prd_d50_{LAM_size}.png', LAM_size)
-    plot_LAM_period_distance(100, f'graphs/original/LAM_prd_d100_{LAM_size}.png', LAM_size)
-    plot_lambda(formulas.N_max_assum_original, f'graphs/original/density_{LAM_size}.png', LAM_size)
-    plot_lambda(formulas.N_max_assum, f'graphs/corrected/density_{LAM_size}.png', LAM_size)
-    plot_distance(f'graphs/original/distance_{LAM_size}.png', LAM_size)
+def plot_distance_mbits(saveloc, LAM_size=350):
+    BW = 10 * 1000 * (1024/8)
+    LAM_prd = 5
+    f_prd = 0.1
+    T_prop = LAM_prd * f_prd
+
+    x = np.array(range(1000, 5001, 500))
+    y1 = [formulas.N_max_d(T_prop, BW, L, 50, LAM_size) for L in x]
+    plt.plot(x, y1, label='d=50m', linestyle='solid', color='red')
+    y2 = [formulas.N_max_d(T_prop, BW, L, 100, LAM_size) for L in x]
+    plt.plot(x, y2, label='d=100m', linestyle='dashed', color='green')
+    y3 = [formulas.N_max_d(T_prop, BW, L, 150, LAM_size) for L in x]
+    plt.plot(x, y3, label='d=150m', linestyle='dotted', color='blue')
+    y4 = [formulas.N_max_d(T_prop, BW, L, 200, LAM_size) for L in x]
+    plt.plot(x, y4, label='d=200m', linestyle=(0, (1, 1)), color='purple')
+    y5 = [formulas.N_max_d(T_prop, BW, L, 250, LAM_size) for L in x]
+    plt.plot(x, y5, label='d=250m', linestyle='dashdot', color='grey')
+    y6 = [formulas.N_max_d(T_prop, BW, L, 300, LAM_size) for L in x]
+    plt.plot(x, y6, label='d=300m', linestyle=(0, (3, 1, 1, 1, 1, 1)), color='orange')
+
+    # plt.title(f'Maximum number of nodes for distance (d) between sender and receiver. LAM_size = {LAM_size}')
+
+    plt.xlabel('Area Length/Width (L) in meters')
+    plt.ylabel('Number of Nodes')
+    plt.yticks(range(500, 4501, 500))
+
+    plt.xlim([1000, 5000])
+    plt.ylim([0, 4500])
+
+    # Add a grid
+    plt.grid(alpha=.4)
+
+    # Add a Legend
+    plt.legend()
+
+    # Show the plot
+    plt.savefig(saveloc, bbox_inches='tight')
+    plt.close()
+
+
+def plot():
+    plot_size(f'graphs/a2/LAM_size.pdf')
+    plot_size_fixed_length(f'graphs/a2/LAM_size_fixed_length.pdf')
+    plot_bw(f'graphs/a2/bw.pdf')
+    plot_bw_fixed_length(f'graphs/a2/bw_fixed_length.pdf')
+    plot_distance(f'graphs/a2/10mbps.pdf')
+    plot_distance_mbits(f'graphs/a2/10mbitps.pdf')
 
 
 def main():
-    # test()
+    os.makedirs('graphs/a2', exist_ok=True)
 
-    os.makedirs('graphs/original', exist_ok=True)
-    os.makedirs('graphs/corrected', exist_ok=True)
-
-    # Paper claims LAM_size = 350 bytes
-    plot_for_size(350)
-
-    # But 250/300 is a closer match to their graphs?
-    plot_for_size(300)
-    plot_for_size(250)
+    plot()
 
 
 if __name__ == "__main__":
